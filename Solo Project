@@ -1,0 +1,41 @@
+import numpy as np
+import pandas as pd
+
+# Function to generate raw data from mean and standard deviation
+def generate_data(mean, sd, n=6, seed=None):
+    if seed:
+        np.random.seed(seed)  # For reproducibility
+    return np.round(np.random.normal(mean, sd, n), 2)
+
+# Data based on provided descriptive stats
+data = {
+    "Participant": [f"P{i+1}" for i in range(6)] * 4,
+    "Group": ["Self-Controlled"] * 6 + ["Yoked"] * 6 + ["Self-Controlled"] * 6 + ["Yoked"] * 6,
+    "Measure": ["Retention Accuracy (%)"] * 12 + ["Retention Response Time (s)"] * 12,
+    "Value": list(generate_data(86.2, 3.8, 6, seed=1)) +  # Self-Controlled Accuracy
+            list(generate_data(74.5, 5.1, 6, seed=2)) +  # Yoked Accuracy
+            list(generate_data(1.45, 0.12, 6, seed=3)) +  # Self-Controlled Response Time
+            list(generate_data(1.78, 0.15, 6, seed=4))    # Yoked Response Time
+}
+
+# Transfer Test Data
+transfer_data = {
+    "Participant": [f"P{i+1}" for i in range(6)] * 4,
+    "Group": ["Self-Controlled"] * 6 + ["Yoked"] * 6 + ["Self-Controlled"] * 6 + ["Yoked"] * 6,
+    "Measure": ["Transfer Accuracy (%)"] * 12 + ["Transfer Response Time (s)"] * 12,
+    "Value": list(generate_data(83.4, 4.1, 6, seed=5)) +  # Self-Controlled Accuracy
+            list(generate_data(72.6, 5.3, 6, seed=6)) +  # Yoked Accuracy
+            list(generate_data(1.48, 0.10, 6, seed=7)) +  # Self-Controlled Response Time
+            list(generate_data(1.80, 0.13, 6, seed=8))    # Yoked Response Time
+}
+
+# Combine both tests
+df_retention = pd.DataFrame(data)
+df_transfer = pd.DataFrame(transfer_data)
+df_combined = pd.concat([df_retention, df_transfer], ignore_index=True)
+
+# Save raw data to Excel
+raw_data_path = "/mnt/data/Raw_Data_6_Participants.xlsx"
+df_combined.to_excel(raw_data_path, index=False)
+
+raw_data_path
